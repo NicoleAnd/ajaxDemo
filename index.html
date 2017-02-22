@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AjaxDemo</title>
+    <style>
+    	#container{
+    		text-align: center;
+    	}
+    	ul {
+    		list-style: none;
+    	}
+    	button{
+
+    	}
+
+    </style>
+</head>
+
+<body>
+    <div id="container">
+    	<h1>输入要搜索的课程名称</h1>
+        <div>
+        	<div id="searchbox">
+        		<input type="text" id="keyword">
+        		<ul id="hits" style="display:none"></ul>
+        	</div>
+        </div>
+        
+        <button>搜索</button>
+    </div>
+    <script>
+    	document.getElementById('keyword').oninput = function(){
+    		var keyword = this.value;
+    		// 典型的ajax编程模板
+    		// 1.创建XMLHttpRequest对象
+    		var xhr = new XMLHttpRequest();
+    		// 2.open操作初始化请求信息
+    		xhr.open('GET','keyword/hit?keyword=' + encodeURIComponent(keyword),true);
+    		// 3.监听事件处理响应结果
+    		xhr.onreadystatechange = function(){
+    			if (xhr.readyState == 4 && xhr.status == 200) {
+    				handleResult(xhr.responseText);
+    			}
+    		}
+    		// 4.send操作发出请求
+    		xhr.send();
+    	}
+
+    	// 处理相应结果
+    	function handleResult(ret){
+    		// 返回字符串做JSON处理
+    		ret = JSON.parse(ret);
+    		var domHits = document.getElementById('hits');
+    		if (ret.length) {
+    			var lis = [];
+    			for (var i = 0, len = ret.length - 1; i < len; ++i) {
+    				lis.push('<li>' + ret[i] + '<li>');
+    			}
+    			domHits.innerHTML = lis.join('');
+    			domHits.style.display = 'block';
+    		}else{
+    			domHits.innerHTML = '';
+    			domHits.style.display = 'none';
+    		}
+    	}
+    </script>
+</body>
+
+</html>
